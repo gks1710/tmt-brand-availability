@@ -284,16 +284,16 @@
                 let line = '';
                 // Strict reproduction of the output structure:
                 switch(item.id) {
-                    case 'pilania': line = `🔹 *Pilania Industries (Kawach TMT)*\n${min}mm to ${max}mm\n`; break;
-                    case 'pankaj': line = `🔹 *Pankaj Ispat (Dwarka TMT)*\n${min}mm to ${max}mm\n`; break;
-                    case 'alankar': line = `*🔹 Alankar alloys (Sagar tmt)+1000*\n${min}mm to ${max}mm\n`; break;
-                    case 'gravity-swadeshi': line = `*🔹 Gravity ferrous (Swadeshi tmt)*\n${min}mm to ${max}mm\n`; break;
-                    case 'gravity-turbo': line = `*🔹 Gravity ferrous (Ac turbo) +500*\n${min}mm to ${max}mm\n`; break;
-                    case 'raipur': line = `*🔹 Raipur Power (Bheem TMT) +200*\n${min}mm to ${max}mm\n`; break;
-                    case 'gajpati-std': line = `*🔹 Gajpati TMT*\n${min}mm to ${max}mm\n`; break;
-                    case 'gajpati-next': line = `*🔹 Gajpati Next Light Weight (+400)*\n${min}mm to ${max}mm\n`; break;
-                    case 'maruti-nirmaan': line = `*🔹 Maruti ferrous (Nirmaan tmt)*\n${min}mm to ${max}mm\n`; break;
-                    case 'maruti-buland': line = `*🔹 Maruti ferrous (Buland tmt) +400*\n${min}mm to ${max}mm\n`; break;
+                    case 'pilania': line = `*▶ Pilania Industries (Kawach TMT)*\n${min}mm to ${max}mm\n`; break;
+                    case 'pankaj': line = `*▶ Pankaj Ispat (Dwarka TMT)*\n${min}mm to ${max}mm\n`; break;
+                    case 'alankar': line = `*▶ Alankar alloys (Sagar tmt)+1000*\n${min}mm to ${max}mm\n`; break;
+                    case 'gravity-swadeshi': line = `*▶ Gravity ferrous (Swadeshi tmt)*\n${min}mm to ${max}mm\n`; break;
+                    case 'gravity-turbo': line = `*▶ Gravity ferrous (Ac turbo) +500*\n${min}mm to ${max}mm\n`; break;
+                    case 'raipur': line = `*▶ Raipur Power (Bheem TMT) +200*\n${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-std': line = `*▶ Gajpati TMT*\n${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-next': line = `*▶ Gajpati Next Light Weight (+400)*\n${min}mm to ${max}mm\n`; break;
+                    case 'maruti-nirmaan': line = `*▶ Maruti ferrous (Nirmaan tmt)*\n${min}mm to ${max}mm\n`; break;
+                    case 'maruti-buland': line = `*▶ Maruti ferrous (Buland tmt) +400*\n${min}mm to ${max}mm\n`; break;
                 }
                 
                 message += line;
@@ -306,7 +306,7 @@
                 message += hasContent ? '\n' : ''; // Add extra line break if preceded by other content
                 message += `🌆 *RAIGARH TMT*\n`;
                 raigarhItems.forEach(item => {
-                    message += `🔹${item.name} \n`;
+                    message += `▶ ${item.name} \n`;
                 });
                 hasContent = true;
             }
@@ -319,7 +319,7 @@
             // 6mm (Editable, but part of Sauda block)
             if (isItemChecked('tmt-6mm')) {
                 const tmt6mm = document.getElementById('tmt-6mm-value').value || '0';
-                saudaContent += `🔹TMT ${tmt6mm}mm (Raipur / Raigarh)\n`;
+                saudaContent += `▶ TMT ${tmt6mm}mm (Raipur / Raigarh)\n`;
             }
             
             // 5.2mm, 5mm, 4.8mm (Combined line)
@@ -330,18 +330,18 @@
             const combinedTMTs = [tmt52, tmt5, tmt48].filter(val => val !== null).join(', ');
             
             if (combinedTMTs) {
-                saudaContent += `🔹TMT ${combinedTMTs}\n`;
+                saudaContent += `▶ TMT ${combinedTMTs}\n`;
             }
             
             // Round 5.5mm (Editable)
             if (isItemChecked('round-55mm')) {
                 const round55mm = document.getElementById('round-55mm-value').value || '0';
-                saudaContent += `🔹Round ${round55mm}mm\n`;
+                saudaContent += `▶ Round ${round55mm}mm\n`;
             }
 
             // Static Sauda Items
             editableItems.static.filter(i => i.category === 'sauda' && isItemChecked(i.id)).forEach(item => {
-                const prefix = item.prefix || '🔹';
+                const prefix = item.prefix || '▶ ';
                 saudaContent += `${prefix}${item.name} \n`;
             });
             
