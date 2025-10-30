@@ -161,7 +161,7 @@
                 { id: 'kamdhenu', name: 'AL KAMDHENU GOLD', isSelected: true, category: 'sauda' },
                 { id: 'rungta-rashmi', name: 'Rungta TMT / Rashmi TMT', isSelected: true, category: 'sauda' },
                 { id: 'blueline-others', name: 'Blueline / Sarthak / Prime Gold / GK / GOEL / Shaurya /Neev /Jindal TMT(For Projects)', isSelected: true, category: 'sauda' },
-                { id: 'tata-sail-jsw', name: 'Tata Tiscon / Sail / JSW TMT', isSelected: true, category: 'sauda', prefix: '🔷' },
+                { id: 'tata-sail-jsw', name: 'Tata Tiscon / Sail / JSW TMT', isSelected: true, category: 'sauda', prefix: '▶ ' },
             ]
         };
 
@@ -284,17 +284,17 @@
                 let line = '';
                 // Strict reproduction of the output structure:
                 switch(item.id) {
-                    case 'pilania': line = `*▶ Pilania Industries (Kawach TMT)*\n${min}mm to ${max}mm\n`; break;
-                    case 'pankaj': line = `*▶ Pankaj Ispat (Dwarka TMT)*\n${min}mm to ${max}mm\n`; break;
-                    case 'alankar': line = `*▶ Alankar alloys (Sagar tmt)+1000*\n${min}mm to ${max}mm\n`; break;
-                    case 'gravity-swadeshi': line = `*▶ Gravity ferrous (Swadeshi tmt)*\n${min}mm to ${max}mm\n`; break;
-                    case 'gravity-turbo': line = `*▶ Gravity ferrous (Ac turbo) +500*\n${min}mm to ${max}mm\n`; break;
-                    case 'raipur': line = `*▶ Raipur Power (Bheem TMT) +200*\n${min}mm to ${max}mm\n`; break;
-                    case 'gajpati-std': line = `*▶ Gajpati TMT*\n${min}mm to ${max}mm\n`; break;
-                    case 'gajpati-next': line = `*▶ Gajpati Next Light Weight (+400)*\n${min}mm to ${max}mm\n`; break;
-                    case 'maruti-nirmaan': line = `*▶ Maruti ferrous (Nirmaan tmt)*\n${min}mm to ${max}mm\n`; break;
-                    case 'maruti-buland': line = `*▶ Maruti ferrous (Buland tmt) +400*\n${min}mm to ${max}mm\n`; break;
-                }
+                    case 'pilania': line = `*▶ Pilania Industries (Kawach TMT)*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'pankaj': line = `*▶ Pankaj Ispat (Dwarka TMT)*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'alankar': line = `*▶ Alankar alloys (Sagar tmt)+1000*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'gravity-swadeshi': line = `*▶ Gravity ferrous (Swadeshi tmt)*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'gravity-turbo': line = `*▶ Gravity ferrous (Ac turbo) +500*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'raipur': line = `*▶ Raipur Power (Bheem TMT) +200*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-std': line = `*▶ Gajpati TMT*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-next': line = `*▶ Gajpati Next Light Weight (+400)*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'maruti-nirmaan': line = `*▶ Maruti ferrous (Nirmaan tmt)*\n  	${min}mm to ${max}mm\n`; break;
+                    case 'maruti-buland': line = `*▶ Maruti ferrous (Buland tmt) +400*\n  	${min}mm to ${max}mm\n`; break;
+                } 
                 
                 message += line;
                 hasContent = true;
