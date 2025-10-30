@@ -59,7 +59,7 @@
 
         <!-- Left Panel: Input Form (50% width on md and larger) -->
         <div id="input-panel" class="md:w-1/2 p-6 bg-light-bg border-r border-gray-700 overflow-y-auto">
-            <h1 class="text-3xl font-extrabold mb-6 text-primary-blue">GKS - TMT Price List Editor</h1>
+            <h1 class="text-2xl font-extrabold mb-6 text-text-light">GKS - TMT Price List Editor</h1>
             
             <div class="space-y-6" id="input-fields">
                 
@@ -105,14 +105,9 @@
 
         <!-- Right Panel: Output Preview & Copy (50% width on md and larger) -->
         <div id="output-panel" class="md:w-1/2 p-6 bg-dark-bg flex flex-col">
-            <h1 class="text-3xl font-extrabold mb-6 text-green-400">WhatsApp Preview</h1>
-            
-            <!-- Message Box -->
-            <div id="message-preview" class="whatsapp-preview flex-grow bg-gray-900 p-4 rounded-lg shadow-xl text-gray-100 text-sm overflow-auto mb-6">
-                <!-- Preview content will be updated here -->
-            </div>
-            
-            <!-- Copy Button -->
+            <h1 class="text-2xl font-extrabold mb-6 text-green-400">WhatsApp Preview</h1>
+			
+			<!-- Copy Button -->
             <button id="copy-button" onclick="copyMessage()" class="w-full py-3 bg-green-600 hover:bg-green-700 text-text-light font-bold rounded-lg shadow-lg transition duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M15 8a3 3 0 10-2.977-2.993l-1.278 1.28a1 1 0 00-.018 1.415.5.5 0 11-.707.707 1 1 0 001.415-.018l1.28-1.278A3 3 0 0015 8z" />
@@ -121,7 +116,14 @@
                 </svg>
                 Copy Message to Clipboard
             </button>
+            
             <div id="copy-status" class="mt-2 text-center text-sm text-yellow-500 opacity-0 transition-opacity duration-300"></div>
+            
+            <!-- Message Box -->
+            <div id="message-preview" class="whatsapp-preview flex-grow bg-gray-900 p-4 rounded-lg shadow-xl text-gray-100 text-sm overflow-auto mb-6">
+                <!-- Preview content will be updated here -->
+            </div>
+            
         </div>
     </div>
 
