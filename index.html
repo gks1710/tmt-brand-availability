@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMT Price Message Generator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for clean, readable layout */
+        body { font-family: 'Inter', sans-serif; }
+        .whatsapp-preview {
+            white-space: pre-wrap; /* Preserve formatting and wrap lines */
+            font-family: monospace; /* Mimic WhatsApp's code/pre-formatted style */
+            min-height: 400px;
+        }
+        /* Style the input fields to look integrated but clear */
+        .size-input {
+            width: 60px;
+            padding: 4px;
+            text-align: center;
+            border: 1px solid #4a5568;
+            background-color: #2d3748;
+            color: #f7fafc;
+        }
+        /* Style checkboxes for dark theme */
+        .form-checkbox {
+            cursor: pointer;
+        }
+        /* Hide scrollbar for aesthetic, but keep it functional */
+        .overflow-y-auto::-webkit-scrollbar {
+            display: none;
+        }
+        .overflow-y-auto {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+    <script>
+        // Set Tailwind config for aesthetics
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#4c51bf',
+                        'dark-bg': '#1a202c',
+                        'light-bg': '#2d3748',
+                        'text-light': '#f7fafc',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-bg text-text-light">
+
+    <!-- Main Container: Flexbox for 50/50 split on desktop, stacking on mobile -->
+    <div class="flex flex-col md:flex-row min-h-screen">
+
+        <!-- Left Panel: Input Form (50% width on md and larger) -->
+        <div id="input-panel" class="md:w-1/2 p-6 bg-light-bg border-r border-gray-700 overflow-y-auto">
+            <h1 class="text-3xl font-extrabold mb-6 text-primary-blue">TMT Price List Editor</h1>
+            
+            <div class="space-y-6" id="input-fields">
+                
+                <!-- Date and Header Input -->
+                <div class="bg-gray-700 p-4 rounded-lg shadow-md">
+                    <label class="block text-sm font-medium mb-2">Header & Date</label>
+                    <div class="flex items-center space-x-2 text-lg">
+                        <span class="font-semibold">AR Enterprises</span>
+                        <span class="text-gray-400">|</span>
+                        <input type="text" id="currentDate" class="size-input text-base w-24" readonly>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-semibold mt-6 text-yellow-300">Range Inputs (mm to mm)</h2>
+
+                <!-- Range Inputs Loop -->
+                <div id="range-inputs" class="space-y-4">
+                    <!-- Dynamic inputs will be generated here by JS -->
+                </div>
+
+                <h2 class="text-xl font-semibold mt-6 text-yellow-300">Single Value Inputs (e.g., 5.2mm)</h2>
+
+                <!-- Single Value Inputs Loop -->
+                <div id="single-inputs" class="space-y-4">
+                    <!-- Dynamic inputs will be generated here by JS -->
+                </div>
+
+                <!-- Static Lists -->
+                <div class="bg-gray-700 p-4 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-primary-blue mb-2">Raigarh TMT</h2>
+                    <div id="raigarh-inputs" class="space-y-3 mt-3">
+                        <!-- Raigarh TMT inputs -->
+                    </div>
+                    
+                    <h2 class="text-xl font-semibold text-primary-blue mt-6 mb-2">Separate Sauda Static Items</h2>
+                    <div id="sauda-static-inputs" class="space-y-3 mt-3">
+                        <!-- Separate Sauda Static inputs -->
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Right Panel: Output Preview & Copy (50% width on md and larger) -->
+        <div id="output-panel" class="md:w-1/2 p-6 bg-dark-bg flex flex-col">
+            <h1 class="text-3xl font-extrabold mb-6 text-green-400">WhatsApp Preview</h1>
+            
+            <!-- Message Box -->
+            <div id="message-preview" class="whatsapp-preview flex-grow bg-gray-900 p-4 rounded-lg shadow-xl text-gray-100 text-sm overflow-auto mb-6">
+                <!-- Preview content will be updated here -->
+            </div>
+            
+            <!-- Copy Button -->
+            <button id="copy-button" onclick="copyMessage()" class="w-full py-3 bg-green-600 hover:bg-green-700 text-text-light font-bold rounded-lg shadow-lg transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M15 8a3 3 0 10-2.977-2.993l-1.278 1.28a1 1 0 00-.018 1.415.5.5 0 11-.707.707 1 1 0 001.415-.018l1.28-1.278A3 3 0 0015 8z" />
+                    <path d="M6.5 14.75a.75.75 0 100-1.5.75.75 0 000 1.5z" />
+                    <path d="M2 10a2 2 0 012-2h3.5a.5.5 0 010 1H4a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1v-3.5a.5.5 0 011 0V16a2 2 0 01-2 2H4a2 2 0 01-2-2v-6z" />
+                </svg>
+                Copy Message to Clipboard
+            </button>
+            <div id="copy-status" class="mt-2 text-center text-sm text-yellow-500 opacity-0 transition-opacity duration-300"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure for all editable items
+        const editableItems = {
+            range: [
+                { id: 'pilania', name: 'Pilania Industries (Kawach TMT)', min: 8, max: 16, suffix: '', isSelected: true },
+                { id: 'pankaj', name: 'Pankaj Ispat (Dwarka TMT)', min: 8, max: 20, suffix: '', isSelected: true },
+                { id: 'alankar', name: 'Alankar alloys (Sagar tmt)', min: 8, max: 16, suffix: '+1000', isSelected: true },
+                { id: 'gravity-swadeshi', name: 'Gravity ferrous (Swadeshi tmt)', min: 8, max: 25, suffix: '', isSelected: true },
+                { id: 'gravity-turbo', name: 'Gravity ferrous (Ac turbo)', min: 8, max: 25, suffix: '+500', isSelected: true },
+                { id: 'raipur', name: 'Raipur Power (Bheem TMT)', min: 8, max: 16, suffix: '+200', isSelected: true },
+                { id: 'gajpati-std', name: 'Gajpati TMT', min: 8, max: 32, suffix: '', isSelected: true },
+                { id: 'gajpati-next', name: 'Gajpati Next Light Weight', min: 8, max: 12, suffix: '+400', isSelected: true },
+                { id: 'maruti-nirmaan', name: 'Maruti ferrous (Nirmaan tmt)', min: 8, max: 12, suffix: '', isSelected: true },
+                { id: 'maruti-buland', name: 'Maruti ferrous (Buland tmt)', min: 8, max: 12, suffix: '+400', isSelected: true },
+            ],
+            single: [
+                { id: 'tmt-6mm', name: 'TMT 6mm (Raipur / Raigarh)', value: 6, suffix: 'mm', isSelected: true },
+                { id: 'tmt-52mm', name: 'TMT 5.2mm', value: 5.2, suffix: 'mm', isSelected: true },
+                { id: 'tmt-5mm', name: 'TMT 5mm', value: 5, suffix: 'mm', isSelected: true },
+                { id: 'tmt-48mm', name: 'TMT 4.8mm', value: 4.8, suffix: 'mm', isSelected: true },
+                { id: 'round-55mm', name: 'Round 5.5mm', value: 5.5, suffix: 'mm', isSelected: true },
+            ],
+            static: [
+                // RAIGARH TMT
+                { id: 'bs-tmt', name: 'BS TMT', isSelected: true, category: 'raigarh' },
+                { id: 'nr-tmt', name: 'NR TMT', isSelected: true, category: 'raigarh' },
+                { id: 'vaastu-tmt', name: 'VAASTU TMT', isSelected: true, category: 'raigarh' },
+                { id: 'sky-tmt', name: 'SKY TMT', isSelected: true, category: 'raigarh' },
+                { id: 'yug-tmt', name: 'YUG TMT', isSelected: true, category: 'raigarh' },
+                // Separate Sauda - Static items without specific inputs
+                { id: 'binding-wire', name: 'Binding Wire / Nails', isSelected: true, category: 'sauda' },
+                { id: 'kamdhenu', name: 'AL KAMDHENU GOLD', isSelected: true, category: 'sauda' },
+                { id: 'rungta-rashmi', name: 'Rungta TMT / Rashmi TMT', isSelected: true, category: 'sauda' },
+                { id: 'blueline-others', name: 'Blueline / Sarthak / Prime Gold / GK / GOEL / Shaurya /Neev /Jindal TMT(For Projects)', isSelected: true, category: 'sauda' },
+                { id: 'tata-sail-jsw', name: 'Tata Tiscon / Sail / JSW TMT', isSelected: true, category: 'sauda', prefix: '🔷' },
+            ]
+        };
+
+        const dateInput = document.getElementById('currentDate');
+        const rangeInputsContainer = document.getElementById('range-inputs');
+        const singleInputsContainer = document.getElementById('single-inputs');
+        const raigarhInputsContainer = document.getElementById('raigarh-inputs');
+        const saudaStaticInputsContainer = document.getElementById('sauda-static-inputs');
+        const messagePreview = document.getElementById('message-preview');
+        const copyStatus = document.getElementById('copy-status');
+
+        /**
+         * Gets the current date formatted as DD-MM-YYYY.
+         * @returns {string} The formatted date string.
+         */
+        function getCurrentDate() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = now.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+        
+        /**
+         * Checks if an item's checkbox is currently selected in the UI.
+         */
+        function isItemChecked(itemId) {
+            const checkbox = document.getElementById(`${itemId}-check`);
+            return checkbox ? checkbox.checked : false;
+        }
+
+        /**
+         * Creates the HTML markup for a checkbox input.
+         * @param {object} item - The item object from editableItems.
+         */
+        function createCheckbox(item) {
+            return `
+                <input type="checkbox" id="${item.id}-check" ${item.isSelected ? 'checked' : ''} 
+                       onchange="generateMessage()" 
+                       class="form-checkbox h-5 w-5 text-primary-blue bg-gray-600 border-gray-500 rounded focus:ring-primary-blue">
+            `;
+        }
+
+        /**
+         * Initializes the input fields in the UI based on the editableItems data structure.
+         */
+        function initializeInputs() {
+            dateInput.value = getCurrentDate();
+
+            // 1. Range Inputs
+            editableItems.range.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2 bg-gray-700 p-3 rounded-lg';
+                div.innerHTML = `
+                    ${createCheckbox(item)}
+                    <label for="${item.id}-check" class="flex-grow font-medium text-gray-200">${item.name} <span class="text-sm text-yellow-400">${item.suffix}</span></label>
+                    <input type="number" step="1" id="${item.id}-min" value="${item.min}" class="size-input rounded" oninput="generateMessage()">
+                    <span class="text-gray-400">to</span>
+                    <input type="number" step="1" id="${item.id}-max" value="${item.max}" class="size-input rounded" oninput="generateMessage()">
+                    <span class="text-gray-400">mm</span>
+                `;
+                rangeInputsContainer.appendChild(div);
+            });
+
+            // 2. Single Inputs (Editable Values)
+            editableItems.single.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2 bg-gray-700 p-3 rounded-lg';
+                div.innerHTML = `
+                    ${createCheckbox(item)}
+                    <label for="${item.id}-check" class="flex-grow font-medium text-gray-200">${item.name}</label>
+                    <input type="number" step="0.1" id="${item.id}-value" value="${item.value}" class="size-input rounded w-16" oninput="generateMessage()">
+                    <span class="text-gray-400">${item.suffix}</span>
+                `;
+                singleInputsContainer.appendChild(div);
+            });
+            
+            // 3. Static Inputs (Raigarh TMT)
+            editableItems.static.filter(i => i.category === 'raigarh').forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2';
+                div.innerHTML = `
+                    ${createCheckbox(item)}
+                    <label for="${item.id}-check" class="font-medium text-gray-200">${item.name}</label>
+                `;
+                raigarhInputsContainer.appendChild(div);
+            });
+
+            // 4. Static Inputs (Separate Sauda)
+            editableItems.static.filter(i => i.category === 'sauda').forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2';
+                div.innerHTML = `
+                    ${createCheckbox(item)}
+                    <label for="${item.id}-check" class="font-medium text-gray-200">${item.name}</label>
+                `;
+                saudaStaticInputsContainer.appendChild(div);
+            });
+            
+            // Initial message generation
+            generateMessage();
+        }
+
+        /**
+         * Generates the final WhatsApp message string based on current input values and selections.
+         */
+        function generateMessage() {
+            const date = dateInput.value;
+            let message = `AR Enterprises\n📅 ${date}\n\n`;
+            let hasContent = false; // Flag to track if any content was added after the header
+
+            // --- Main Products (Range Inputs) ---
+            
+            editableItems.range.forEach(item => {
+                if (!isItemChecked(item.id)) return; // Skip if not checked
+
+                const min = document.getElementById(`${item.id}-min`).value || '0';
+                const max = document.getElementById(`${item.id}-max`).value || '0';
+                
+                let line = '';
+                // Strict reproduction of the output structure:
+                switch(item.id) {
+                    case 'pilania': line = `🔹 *Pilania Industries (Kawach TMT)*\n${min}mm to ${max}mm\n`; break;
+                    case 'pankaj': line = `🔹 *Pankaj Ispat (Dwarka TMT)*\n${min}mm to ${max}mm\n`; break;
+                    case 'alankar': line = `*🔹 Alankar alloys (Sagar tmt)+1000*\n${min}mm to ${max}mm\n`; break;
+                    case 'gravity-swadeshi': line = `*🔹 Gravity ferrous (Swadeshi tmt)*\n${min}mm to ${max}mm\n`; break;
+                    case 'gravity-turbo': line = `*🔹 Gravity ferrous (Ac turbo) +500*\n${min}mm to ${max}mm\n`; break;
+                    case 'raipur': line = `*🔹 Raipur Power (Bheem TMT) +200*\n${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-std': line = `*🔹 Gajpati TMT*\n${min}mm to ${max}mm\n`; break;
+                    case 'gajpati-next': line = `*🔹 Gajpati Next Light Weight (+400)*\n${min}mm to ${max}mm\n`; break;
+                    case 'maruti-nirmaan': line = `*🔹 Maruti ferrous (Nirmaan tmt)*\n${min}mm to ${max}mm\n`; break;
+                    case 'maruti-buland': line = `*🔹 Maruti ferrous (Buland tmt) +400*\n${min}mm to ${max}mm\n`; break;
+                }
+                
+                message += line;
+                hasContent = true;
+            });
+            
+            // --- RAIGARH TMT ---
+            const raigarhItems = editableItems.static.filter(i => i.category === 'raigarh' && isItemChecked(i.id));
+            if (raigarhItems.length > 0) {
+                message += hasContent ? '\n' : ''; // Add extra line break if preceded by other content
+                message += `🌆 *RAIGARH TMT*\n`;
+                raigarhItems.forEach(item => {
+                    message += `🔹${item.name} \n`;
+                });
+                hasContent = true;
+            }
+
+
+            // --- Separate Sauda ---
+            
+            let saudaContent = '';
+            
+            // 6mm (Editable, but part of Sauda block)
+            if (isItemChecked('tmt-6mm')) {
+                const tmt6mm = document.getElementById('tmt-6mm-value').value || '0';
+                saudaContent += `🔹TMT ${tmt6mm}mm (Raipur / Raigarh)\n`;
+            }
+            
+            // 5.2mm, 5mm, 4.8mm (Combined line)
+            const tmt52 = isItemChecked('tmt-52mm') ? `${document.getElementById('tmt-52mm-value').value}mm` : null;
+            const tmt5 = isItemChecked('tmt-5mm') ? `${document.getElementById('tmt-5mm-value').value}mm` : null;
+            const tmt48 = isItemChecked('tmt-48mm') ? `${document.getElementById('tmt-48mm-value').value}mm` : null;
+            
+            const combinedTMTs = [tmt52, tmt5, tmt48].filter(val => val !== null).join(', ');
+            
+            if (combinedTMTs) {
+                saudaContent += `🔹TMT ${combinedTMTs}\n`;
+            }
+            
+            // Round 5.5mm (Editable)
+            if (isItemChecked('round-55mm')) {
+                const round55mm = document.getElementById('round-55mm-value').value || '0';
+                saudaContent += `🔹Round ${round55mm}mm\n`;
+            }
+
+            // Static Sauda Items
+            editableItems.static.filter(i => i.category === 'sauda' && isItemChecked(i.id)).forEach(item => {
+                const prefix = item.prefix || '🔹';
+                saudaContent += `${prefix}${item.name} \n`;
+            });
+            
+            // Only add the 'Separate Sauda' header if there's content below it
+            if (saudaContent) {
+                message += hasContent ? '\n' : ''; // Add extra line break if preceded by other content
+                message += `📦 *Separate Sauda*\n`;
+                message += saudaContent;
+                hasContent = true;
+            }
+            
+            messagePreview.innerText = message;
+        }
+
+        /**
+         * Copies the generated message text to the clipboard.
+         */
+        function copyMessage() {
+            const textToCopy = messagePreview.innerText;
+            if (navigator.clipboard) {
+                // Use modern Clipboard API if available
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopyStatus('Copied!');
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                    // Fallback to execCommand if clipboard API fails
+                    fallbackCopy(textToCopy);
+                });
+            } else {
+                // Fallback for older browsers (required for Canvas compatibility)
+                fallbackCopy(textToCopy);
+            }
+        }
+
+        /**
+         * Fallback mechanism to copy text using document.execCommand.
+         * @param {string} text The text to copy.
+         */
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyStatus('Copied! (Fallback)');
+                } else {
+                    showCopyStatus('Copy failed, please copy manually.');
+                }
+            } catch (err) {
+                showCopyStatus('Copy failed, please copy manually.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        /**
+         * Displays a temporary status message for clipboard operations.
+         * @param {string} message The message to display.
+         */
+        function showCopyStatus(message) {
+            copyStatus.innerText = message;
+            copyStatus.classList.remove('opacity-0');
+            copyStatus.classList.add('opacity-100');
+            setTimeout(() => {
+                copyStatus.classList.remove('opacity-100');
+                copyStatus.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        // Initialize on window load
+        window.onload = initializeInputs;
+
+    </script>
+</body>
+</html>
